@@ -73,7 +73,7 @@ class List extends PureComponent {
 
   render() {
     const { isLoading, list } = this.props.products
-
+    const { role: isAdmin } = this.props.user;
     return (
       <div>
         {/* SEO */}
@@ -87,16 +87,17 @@ class List extends PureComponent {
         {/* Page Content */}
         <div>
           {/* Top actions bar */}
-          <Grid alignCenter={true} style={{ padding: '1em' }}>
-            <GridCell style={{ textAlign: 'right' }}>
-              <Link to={admin.productCreate.path}>
-                <Button theme="secondary" style={{ marginTop: '1em' }}>
-                  <Icon size={1.2} style={{ color: white }}>add</Icon> Add
+          {isAdmin && (
+            <Grid alignCenter={true} style={{ padding: '1em' }}>
+              <GridCell style={{ textAlign: 'right' }}>
+                <Link to={admin.productCreate.path}>
+                  <Button theme="secondary" style={{ marginTop: '1em' }}>
+                    <Icon size={1.2} style={{ color: white }}>add</Icon> Add
                 </Button>
-              </Link>
-            </GridCell>
-          </Grid>
-
+                </Link>
+              </GridCell>
+            </Grid>
+          )}
           {/* Product list */}
           <Grid alignCenter={true} style={{ padding: '1em' }}>
             <GridCell>
@@ -108,58 +109,60 @@ class List extends PureComponent {
                     <th>Description</th>
                     <th>Created at</th>
                     <th>Updated at</th>
-                    <th style={{ textAlign: 'center' }}>Actions</th>
+                    {isAdmin && <th style={{ textAlign: 'center' }}>Actions</th>}
                   </tr>
                 </thead>
 
                 <tbody>
-                {
-                  isLoading
-                    ? <tr>
+                  {
+                    isLoading
+                      ? <tr>
                         <td colSpan="6">
                           <Loading message="loading products..."/>
                         </td>
                       </tr>
-                    : list.length > 0
-                      ? list.map(({ id, image, name, description, createdAt, updatedAt }) => (
+                      : list.length > 0
+                        ? list.map(({ id, image, name, description, createdAt, updatedAt }) => (
                           <tr key={id}>
                             <td>
-                              <img src={routeImage + image} alt={name} style={{ width: 100 }}/>
+                              <img src={routeImage + image} alt={name} style={{ width: 100 }} />
                             </td>
 
                             <td>
-                              { name }
+                              {name}
                             </td>
 
                             <td>
-                              { description }
+                              {description}
                             </td>
 
                             <td>
-                              { new Date(parseInt(createdAt)).toDateString() }
+                              {new Date(parseInt(createdAt)).toDateString()}
                             </td>
 
                             <td>
-                              { new Date(parseInt(updatedAt)).toDateString() }
+                              {new Date(parseInt(updatedAt)).toDateString()}
                             </td>
+                            {isAdmin && (
+                              <td style={{ textAlign: 'center' }}>
+                                <Link to={admin.productEdit.path(id)}>
+                                  <Icon size={2} style={{ color: black }}>mode_edit</Icon>
+                                </Link>
 
-                            <td style={{ textAlign: 'center' }}>
-                              <Link to={admin.productEdit.path(id)}>
-                                <Icon size={2} style={{ color: black }}>mode_edit</Icon>
-                              </Link>
-
-                              <span style={{ cursor: 'pointer' }} onClick={this.remove.bind(this, id)}>
+                                <span style={{ cursor: 'pointer' }} onClick={this.remove.bind(this, id)}>
                                   <Icon size={2} style={{ marginLeft: '0.5em' }}>delete</Icon>
                                 </span>
-                            </td>
+                              </td>
+                            )}
+
                           </tr>
                         ))
-                      : <tr>
+                        : <tr>
                           <td colSpan="6">
-                            <EmptyMessage message="No products to show."/>
+                            <EmptyMessage message="No products to show." />
                           </td>
                         </tr>
-                }
+                  }
                 </tbody>
               </table>
             </GridCell>
@@ -182,7 +185,8 @@ List.propTypes = {
 // Component State
 function listState(state) {
   return {
-    products: state.products
+    products: state.products,
+    user: state.user
   }
 }
 

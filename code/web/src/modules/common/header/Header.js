@@ -13,11 +13,12 @@ import { level1 } from '../../../ui/common/shadows'
 import home from '../../../setup/routes/home'
 import user from '../../../setup/routes/user'
 import crate from '../../../setup/routes/crate'
+import product from '../../../setup/routes/product'
 import admin from '../../../setup/routes/admin'
 import Logo from './Logo'
 import Menu from './Menu'
 import MenuItem from './MenuItem'
-
+console.log("header", crate, 'prod', product)
 // Component
 const Header = (props) => {
   return (
@@ -54,7 +55,9 @@ const Header = (props) => {
             props.user.isAuthenticated
               ?
               <Menu>
-                { props.user.details.role === 'ADMIN' && <MenuItem to={admin.dashboard.path} section="admin">Admin</MenuItem> }
+                { props.user.details.role === 'ADMIN' ? 
+                <MenuItem to={admin.dashboard.path} section="admin">Admin</MenuItem> :
+                <MenuItem to={product.productList.path} section="admin">Products</MenuItem> }
 
                 <MenuItem to={crate.list.path}>Crates</MenuItem>
 
